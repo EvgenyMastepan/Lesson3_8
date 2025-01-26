@@ -9,6 +9,7 @@ import UIKit
 
 protocol RegistrationViewProtocol: AnyObject{
     
+    
 }
 
 class RegistrationView: UIViewController, RegistrationViewProtocol{
@@ -23,14 +24,19 @@ class RegistrationView: UIViewController, RegistrationViewProtocol{
         $0.sourceType = .savedPhotosAlbum
         return $0
     }(UIImagePickerController())
-    private lazy var userImage: UIImageView = {
+    lazy var userImage: UIImageView = {
+        let panGesture = UITapGestureRecognizer(target: self, action: #selector(tapImage))
+        $0.addGestureRecognizer(panGesture)
         $0.image = UIImage(systemName: "person.crop.square.fill")
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.layer.cornerRadius = 10
+        $0.isUserInteractionEnabled = true
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
         return $0
     }(UIImageView())
+    
+    private lazy var nameText = TextFieldView(placeholder: "имя")
     private lazy var emailText = TextFieldView(placeholder: "электропочта")
     private lazy var passwordText = TextFieldView(placeholder: "пароль", secure: true)
         
@@ -42,15 +48,22 @@ class RegistrationView: UIViewController, RegistrationViewProtocol{
         $0.setTitle(" Войти", for: .normal)
         $0.tintColor = .white
         return $0
-    }(UIButton(primaryAction: presenter.action))
-
+    }(UIButton())
+    
+    @objc func tapImage(sender: UIPanGestureRecognizer){
+        DispatchQueue.main.async { [ weak self ] in
+                    guard let self = self else { return }
+            self.present(self.userPicker, animated: true, completion: nil)
+                }
+        
+    }
     private lazy var registrationLabel = LabelView(font: .systemFont(ofSize: 14, weight: .regular), aligment: .center)
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         textInit()
-        view.addSubviews(titleLabel, userImage, emailText, passwordText, enterButton, registrationLabel)
+        view.addSubviews(titleLabel, userImage, nameText, emailText, passwordText, enterButton, registrationLabel)
         setupConstraint()
     }
     
@@ -61,19 +74,28 @@ class RegistrationView: UIViewController, RegistrationViewProtocol{
         self.registrationLabel.text = "есть аккаунт"
     }
     
+    
+    
+    
     private func setupConstraint() {
         NSLayoutConstraint.activate([
+
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
             titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: ourIndent),
             titleLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -ourIndent),
             titleLabel.heightAnchor.constraint(equalToConstant: 40),
             
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 100),
-            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: ourIndent),
-            titleLabel.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -ourIndent),
-            titleLabel.heightAnchor.constraint(equalToConstant: 40),
+            userImage.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: ourIndent),
+            userImage.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: ourIndent),
+            userImage.widthAnchor.constraint(equalToConstant: 200),
+            userImage.heightAnchor.constraint(equalToConstant: 200),
             
-            emailText.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: ourIndent),
+            nameText.topAnchor.constraint(equalTo: userImage.bottomAnchor, constant: ourIndent),
+            nameText.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: ourIndent),
+            nameText.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -ourIndent),
+            nameText.heightAnchor.constraint(equalToConstant: 40),
+            
+            emailText.topAnchor.constraint(equalTo: nameText.bottomAnchor, constant: ourIndent),
             emailText.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: ourIndent),
             emailText.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -ourIndent),
             emailText.heightAnchor.constraint(equalToConstant: 40),

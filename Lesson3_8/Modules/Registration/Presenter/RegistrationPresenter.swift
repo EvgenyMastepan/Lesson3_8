@@ -22,4 +22,6 @@ class RegistrationPresenter: RegistrationPresenterProtocol{
     init(view: RegistrationViewProtocol){
         self.view = view
     }
+    
+
 }

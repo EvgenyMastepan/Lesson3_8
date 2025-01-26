@@ -19,4 +19,11 @@ class Builder {
         vc.presenter = presenter
         return vc
     }
+    static func createRegistrationView() -> UIViewController{
+        let vc = RegistrationView()
+        let presenter = RegistrationPresenter(view: vc)
+        vc.presenter = presenter
+        return vc
+    }
+    
 }
